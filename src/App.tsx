@@ -2,7 +2,10 @@ import { createRoot } from "react-dom/client";
 import { Link, BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SearchParams from "./SearchParams"; 
+import { useState } from "react";
 import Details  from "./Details";
+import { Pet } from "./APIResponsesTypes";
+import AdoptedPetContext from "./AdoptedPetContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,8 +17,10 @@ const queryClient = new QueryClient({
 })
 
 const App = () => {
+  const adoptedPet = useState(null as Pet | null);
   return (
     <BrowserRouter>
+    <AdoptedPetContext.Provider value={adoptedPet}>
     <QueryClientProvider client={queryClient}>
  <header>
   <Link to="/">Adopt Me!</Link>
@@ -25,10 +30,16 @@ const App = () => {
     <Route path="/" element={<SearchParams />} />
   </Routes>
     </QueryClientProvider>
+    </AdoptedPetContext.Provider>
     </BrowserRouter>
   );
 };
 
 const container = document.getElementById("root");
+
+if(!container ) {
+  throw new Error("no new container to render to");
+}
+
 const root = createRoot(container);
 root.render(<App />);
